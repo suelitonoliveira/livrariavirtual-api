@@ -5,7 +5,6 @@ import java.util.Optional;
 
 import javax.transaction.Transactional;
 
-import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -15,7 +14,6 @@ import org.springframework.stereotype.Service;
 import com.sueliton.livrariavirtual.domain.Categoria;
 import com.sueliton.livrariavirtual.domain.Livro;
 import com.sueliton.livrariavirtual.repositories.LivroRepository;
-import com.sueliton.livrariavirtual.services.exceptions.DataIntegrityException;
 import com.sueliton.livrariavirtual.services.exceptions.ObjectNotFoundException;
 
 @Service

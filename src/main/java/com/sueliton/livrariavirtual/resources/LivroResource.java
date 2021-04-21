@@ -5,9 +5,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,6 +23,7 @@ import com.sueliton.livrariavirtual.domain.Livro;
 import com.sueliton.livrariavirtual.dtos.LivroDTO;
 import com.sueliton.livrariavirtual.services.LivroService;
 
+@CrossOrigin("*")
 @RestController
 @RequestMapping(value = "/livros")
 public class LivroResource {
@@ -28,7 +32,8 @@ public class LivroResource {
 	private LivroService service;
 
 	@RequestMapping(method = RequestMethod.GET)
-	public ResponseEntity<List<LivroDTO>> findAll(@RequestParam(value = "categoria", defaultValue = "0") Integer id_cat) {
+	public ResponseEntity<List<LivroDTO>> findAll(
+			@RequestParam(value = "categoria", defaultValue = "0") Integer id_cat) {
 		List<Livro> list = service.findAll(id_cat);
 		List<LivroDTO> listDTO = list.stream().map(obj -> new LivroDTO(obj)).collect(Collectors.toList());
 		return ResponseEntity.ok().body(listDTO);
@@ -50,26 +55,27 @@ public class LivroResource {
 	}
 
 	@RequestMapping(method = RequestMethod.POST)
-	public ResponseEntity<Void> insert(@RequestParam(value = "categoria", defaultValue = "0")Integer id_cat, @RequestBody Livro obj) {
+	public ResponseEntity<Void> insert(@RequestParam(value = "categoria", defaultValue = "0") Integer id_cat,
+			@Valid @RequestBody Livro obj) {
 		Livro newObj = service.insert(id_cat, obj);
-		URI uri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/livros/{id}").buildAndExpand(newObj.getId()).toUri();
+		URI uri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/livros/{id}")
+				.buildAndExpand(newObj.getId()).toUri();
 		return ResponseEntity.created(uri).build();
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-	public ResponseEntity<Void> update(@RequestBody Livro obj, @PathVariable Integer id) {
-		//obj.setId(id);
-		obj = service.update(obj.getId(), obj);
-		return ResponseEntity.noContent().build();
-	}
-	
-	@RequestMapping(value = "/{id}", method = RequestMethod.PATCH)
-	public ResponseEntity<Void> updatePatch(@RequestBody Livro obj, @PathVariable Integer id) {
-		//obj.setId(id);
+	public ResponseEntity<Void> update(@Valid @RequestBody Livro obj, @PathVariable Integer id) {
+		// obj.setId(id);
 		obj = service.update(obj.getId(), obj);
 		return ResponseEntity.noContent().build();
 	}
 
+	@RequestMapping(value = "/{id}", method = RequestMethod.PATCH)
+	public ResponseEntity<Void> updatePatch(@Valid @RequestBody Livro obj, @PathVariable Integer id) {
+		// obj.setId(id);
+		obj = service.update(obj.getId(), obj);
+		return ResponseEntity.noContent().build();
+	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
 	public ResponseEntity<Void> delete(@PathVariable Integer id) {

@@ -3,6 +3,9 @@ package com.sueliton.livrariavirtual.services;
 import java.util.List;
 import java.util.Optional;
 
+import javax.transaction.Transactional;
+
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -11,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import com.sueliton.livrariavirtual.domain.Categoria;
 import com.sueliton.livrariavirtual.repositories.CategoriaRepository;
+import com.sueliton.livrariavirtual.services.exceptions.DataIntegrityException;
 import com.sueliton.livrariavirtual.services.exceptions.ObjectNotFoundException;
 
 @Service
@@ -31,12 +35,34 @@ public class CategoriaService {
 		return Optional.of(obj.orElseThrow(() -> new ObjectNotFoundException(
 				"Objeto não encontrato! Id: " + id + ", Tipo: " + Categoria.class.getName())));
 	}
-	
+
 	public Page<Categoria> findPage(Integer page, Integer linesPerPage, String orderBy, String direction) {
 		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
 		return repo.findAll(pageRequest);
 	}
 
+	@Transactional
+	public Categoria insert(Categoria obj) {
+		obj.setId(null);
+		obj = repo.save(obj);
+		return obj;
+	}
+
+	@Transactional
+	public Categoria update(Categoria obj) {
+		return repo.save(obj);
+	}
 	
+
+	@Transactional
+	public void delete(Integer id) {
+		find(id);
+		try {
+			repo.deleteById(id);
+		} catch (ConstraintViolationException e) {
+			throw new DataIntegrityException("Exclusão não permitida, itens vinculados!");
+		}
+
+	}
 
 }

@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import com.sueliton.livrariavirtual.services.exceptions.DataIntegrityException;
 import com.sueliton.livrariavirtual.services.exceptions.ObjectNotFoundException;
 
 @ControllerAdvice
@@ -21,4 +22,12 @@ public class ResourceExceptionHandler {
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(err);
 	}
 
+	@ExceptionHandler(DataIntegrityException.class)
+	public ResponseEntity<StandardError> dataIntegrity(DataIntegrityException e, HttpServletRequest request) {
+		ValidationError err = new ValidationError(System.currentTimeMillis(), HttpStatus.UNPROCESSABLE_ENTITY.value(),
+				"Validation error", "Check the inconsistencies noted below", request.getRequestURI());
+		err.addError("Data integrity", e.getMessage());
+		return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(err);
+	}
+	
 }

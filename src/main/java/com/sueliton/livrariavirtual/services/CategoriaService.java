@@ -13,6 +13,7 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import com.sueliton.livrariavirtual.domain.Categoria;
+import com.sueliton.livrariavirtual.dtos.CategoriaDTO;
 import com.sueliton.livrariavirtual.repositories.CategoriaRepository;
 import com.sueliton.livrariavirtual.services.exceptions.DataIntegrityException;
 import com.sueliton.livrariavirtual.services.exceptions.ObjectNotFoundException;
@@ -49,10 +50,12 @@ public class CategoriaService {
 	}
 
 	@Transactional
-	public Categoria update(Categoria obj) {
-		return repo.save(obj);
+	public Categoria update(Integer id, CategoriaDTO objDto) {
+		Optional<Categoria> obj = find(id);
+		obj.get().setNome(objDto.getNome());
+		obj.get().setDescricao(objDto.getDescricao());
+		return repo.save(obj.get());
 	}
-	
 
 	@Transactional
 	public void delete(Integer id) {

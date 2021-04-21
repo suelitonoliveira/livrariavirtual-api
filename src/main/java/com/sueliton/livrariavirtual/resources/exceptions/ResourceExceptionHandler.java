@@ -36,10 +36,10 @@ public class ResourceExceptionHandler {
 	@ExceptionHandler(ConstraintViolationException.class)
 	public ResponseEntity<StandardError> contraintIntegrity(ConstraintViolationException e,
 			HttpServletRequest request) {
-		ValidationError err = new ValidationError(System.currentTimeMillis(), HttpStatus.UNPROCESSABLE_ENTITY.value(),
-				"Validation error", "Check the inconsistencies noted below", request.getRequestURI());
-		err.addError("Data integrity", "Change not allowed, linked items");
-		return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(err);
+		ValidationError err = new ValidationError(System.currentTimeMillis(), HttpStatus.BAD_REQUEST.value(),
+				"Erro de validação", "Verifique as inconsistências observadas abaixo:", request.getRequestURI());
+		err.addError("Data integrity", "Alteração não permitida, itens vinculados");
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
 	}
 	
 	@ExceptionHandler(NoSuchElementException.class)

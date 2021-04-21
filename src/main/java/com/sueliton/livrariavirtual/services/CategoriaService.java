@@ -22,11 +22,11 @@ public class CategoriaService {
 
 	public Optional<Categoria> find(Integer id) {
 		Optional<Categoria> obj = repo.findById(id);
-
-		if (obj.isEmpty()) {
-			throw new ObjectNotFoundException("Not Found");
-		}
-		return obj;
+		/*
+		 * if (obj.isEmpty()) { throw new ObjectNotFoundException("Not Found"); }
+		 */
+		return Optional.of(obj.orElseThrow(() -> new ObjectNotFoundException(
+				"Objeto não encontrato! Id: " + id + ", Tipo: " + Categoria.class.getName())));
 	}
 
 }

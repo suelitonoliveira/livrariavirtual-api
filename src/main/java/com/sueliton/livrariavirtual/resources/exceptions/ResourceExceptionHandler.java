@@ -1,7 +1,10 @@
 package com.sueliton.livrariavirtual.resources.exceptions;
 
+import java.util.NoSuchElementException;
+
 import javax.servlet.http.HttpServletRequest;
 
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -28,6 +31,23 @@ public class ResourceExceptionHandler {
 				"Validation error", "Check the inconsistencies noted below", request.getRequestURI());
 		err.addError("Data integrity", e.getMessage());
 		return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(err);
+	}
+
+	@ExceptionHandler(ConstraintViolationException.class)
+	public ResponseEntity<StandardError> contraintIntegrity(ConstraintViolationException e,
+			HttpServletRequest request) {
+		ValidationError err = new ValidationError(System.currentTimeMillis(), HttpStatus.UNPROCESSABLE_ENTITY.value(),
+				"Validation error", "Check the inconsistencies noted below", request.getRequestURI());
+		err.addError("Data integrity", "Change not allowed, linked items");
+		return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(err);
+	}
+	
+	@ExceptionHandler(NoSuchElementException.class)
+	public ResponseEntity<StandardError> NoSuchElementException(NoSuchElementException e, HttpServletRequest request) {
+
+		StandardError err = new StandardError(System.currentTimeMillis(), HttpStatus.NOT_FOUND.value(), "Not found",
+				e.getMessage(), request.getRequestURI());
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(err);
 	}
 	
 }

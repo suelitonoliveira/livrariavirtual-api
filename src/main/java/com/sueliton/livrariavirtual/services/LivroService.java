@@ -12,6 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
+import com.sueliton.livrariavirtual.domain.Categoria;
 import com.sueliton.livrariavirtual.domain.Livro;
 import com.sueliton.livrariavirtual.repositories.LivroRepository;
 import com.sueliton.livrariavirtual.services.exceptions.DataIntegrityException;
@@ -46,10 +47,11 @@ public class LivroService {
 	}
 
 	@Transactional
-	public Livro insert(Livro obj) {
+	public Livro insert(Integer id_cat, Livro obj) {
 		obj.setId(null);
-		obj = repo.save(obj);
-		return obj;
+		Optional<Categoria> cat = categoriaService.find(id_cat);
+		obj.setCategoria(cat.get());
+		return repo.save(obj);
 	}
 
 	@Transactional

@@ -57,12 +57,19 @@ public class LivroResource {
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-	public ResponseEntity<Void> update(@RequestBody LivroDTO objDto, @PathVariable Integer id) {
-		Livro obj = service.update(id, objDto);
-		obj.setId(id);
-		obj = service.update(obj.getId(), objDto);
+	public ResponseEntity<Void> update(@RequestBody Livro obj, @PathVariable Integer id) {
+		//obj.setId(id);
+		obj = service.update(obj.getId(), obj);
 		return ResponseEntity.noContent().build();
 	}
+	
+	@RequestMapping(value = "/{id}", method = RequestMethod.PATCH)
+	public ResponseEntity<Void> updatePatch(@RequestBody Livro obj, @PathVariable Integer id) {
+		//obj.setId(id);
+		obj = service.update(obj.getId(), obj);
+		return ResponseEntity.noContent().build();
+	}
+
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
 	public ResponseEntity<Void> delete(@PathVariable Integer id) {

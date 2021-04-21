@@ -13,7 +13,6 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import com.sueliton.livrariavirtual.domain.Livro;
-import com.sueliton.livrariavirtual.dtos.LivroDTO;
 import com.sueliton.livrariavirtual.repositories.LivroRepository;
 import com.sueliton.livrariavirtual.services.exceptions.DataIntegrityException;
 import com.sueliton.livrariavirtual.services.exceptions.ObjectNotFoundException;
@@ -23,11 +22,11 @@ public class LivroService {
 
 	@Autowired
 	private LivroRepository repo;
-	
+
 	@Autowired
 	private CategoriaService categoriaService;
 
-	public List<Livro> findAll( Integer id_cat) {
+	public List<Livro> findAll(Integer id_cat) {
 		categoriaService.find(id_cat);
 		return repo.findAllByCategoria(id_cat);
 	}
@@ -54,10 +53,17 @@ public class LivroService {
 	}
 
 	@Transactional
-	public Livro update(Integer id, LivroDTO objDto) {
-		Optional<Livro> obj = find(id);
-		obj.get().setTitulo(objDto.getTitulo());
-		return repo.save(obj.get());
+	public Livro update(Integer id, Livro obj) {
+		Optional<Livro> newObj = find(id);
+		updateData(newObj, obj);
+		return repo.save(newObj.get());
+	}
+
+	private void updateData(Optional<Livro> newObj, Livro obj) {
+		newObj.get().setTitulo(obj.getTitulo());
+		newObj.get().setNomeAutor(obj.getNomeAutor());
+		newObj.get().setTexto(obj.getTexto());
+
 	}
 
 	@Transactional

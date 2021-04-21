@@ -70,12 +70,9 @@ public class LivroService {
 
 	@Transactional
 	public void delete(Integer id) {
-		find(id);
-		try {
-			repo.deleteById(id);
-		} catch (ConstraintViolationException e) {
-			throw new DataIntegrityException("Exclusão não permitida, itens vinculados!");
-		}
+		Optional<Livro> obj = find(id);
+
+		repo.delete(obj.get());
 
 	}
 
